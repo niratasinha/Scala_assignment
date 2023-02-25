@@ -18,6 +18,7 @@ val format1 ="csv"
 
 // COMMAND ----------
 
+// DBTITLE 1,Reading of file into DataFrame
 //def fileimport(path:String, format:String): DataFrame = {
 
 val df1 = spark.read.format(format1).option("header","true").option("inferschema","true").load(csvpath)
@@ -25,15 +26,16 @@ val df1 = spark.read.format(format1).option("header","true").option("inferschema
 
 // COMMAND ----------
 
+// DBTITLE 1,Define function for filepath and fileformat
 def fileimport(path:String, format:String) {
       val df2 = spark.read.format(format1).option("header","true").option("inferschema","true").load(csvpath)
       df2.printSchema
-  }
+     }
 
 
 // COMMAND ----------
 
- var demo = fileimport(csvpath,format1)
+ val demo = fileimport(csvpath,format1) //call the function to display the schema
 
 
 // COMMAND ----------
@@ -42,13 +44,44 @@ def fileimport(path:String, format:String) {
 
 // COMMAND ----------
 
-df3.createOrReplaceTempView("covid_data")
+// DBTITLE 1,Create a Temporary view of the table
+df3.createOrReplaceTempView("owid_covid_data.csv")
+display (df3.take(100)) //to display first 100 records
 
 
 // COMMAND ----------
 
-// MAGIC %sql
-// MAGIC select * from covid_data;
+// DBTITLE 1,Display continent wise total_cases
+display (df3.groupBy("continent").agg(sum("total_cases")))
+
+// COMMAND ----------
+
+// DBTITLE 1,Display location wise total_cases
+display (df3.groupBy("location").agg(sum("total_cases")))
+
+// COMMAND ----------
+
+val dfYear = df3.withColumn("year", year(to_date(col("date"), "dd/MM/yyyy")))
+display(dfYear)
+
+// COMMAND ----------
+
+// DBTITLE 1,Display maximum cases groupby year and location
+val maxcases = dfYear.groupBy("year", "location").agg(sum("total_cases").alias("total_cases")).orderBy(desc("total_cases"))
+display (maxcases)
+
+
+// COMMAND ----------
+
+// DBTITLE 1,Display good handwash facilities location wise
+val checklocation = dfYear.groupBy("location").agg(sum("handwashing_facilities").alias("handwashing_facilities")).orderBy(desc("handwashing_facilities"))
+display(checklocation)
+
+// COMMAND ----------
+
+val Year = dfYear.select("year").distinct()
+display (year)
+
 
 // COMMAND ----------
 
