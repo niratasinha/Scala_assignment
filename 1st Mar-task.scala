@@ -52,7 +52,7 @@ def isPalindrome(num: Int): Boolean = {
   }
 
 
-isPalindrome(121);
+isPalindrome(123);
 
 // COMMAND ----------
 
@@ -70,3 +70,39 @@ def romanconvert( number : Int): String = {
 return romanequivalent
   }
 romanconvert(5);
+
+// COMMAND ----------
+
+// DBTITLE 1,To find longest Common prefix-Method-1
+def CommonPrefix(text1:String, text2:String):String = {
+  val maxlength = scala.math.min(text1.length, text2.length) //scala.math.min() will return the minimum length of two strings
+  var i = 0
+  while ( i < maxlength && text1(i)== text2(i)) 
+  i += 1;
+  text1.take(i);  //take() will take integer as parameter and will return a new collection of first N elements
+}
+CommonPrefix("sunbath","sunny");
+
+// COMMAND ----------
+
+// DBTITLE 1,Longest Common Prefix-Method -2
+def CommonPrefix(text1: String, text2: String): String = {
+     var common = true
+     var i = 0
+     while(common && i < scala.math.min(text1.length, text2.length)) {
+       if(text1.charAt(i) != text2.charAt(i)) {
+         common = false
+         } else 
+       {
+         i += 1
+         }
+       }
+  text1.substring(0, i)
+  }    
+     
+CommonPrefix("filler", "filling");
+
+// COMMAND ----------
+
+// DBTITLE 1,letter combinations of a phone number
+
